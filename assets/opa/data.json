@@ -1,0 +1,15 @@
+{
+    "description": "Grant storage scopes to indigoiam group",
+    "actor": {
+        "id": "1234",
+        "name": "/indigoiam",
+        "type": "group"
+    },
+    "matchingPolicy": "PATH",
+    "rule": "PERMIT",
+    "scopes": [
+        "storage.read:/slash/",
+        "storage.create:/slash/",
+        "storage.modify:/slash/"
+    ]
+}

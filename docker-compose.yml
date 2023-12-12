@@ -1,0 +1,110 @@
+version: "3.7"
+
+volumes:
+  trustanchors:
+  cabundle:
+  hostcert:
+  db_data:
+  logs:
+
+networks:
+  default:
+    name: example
+  services:
+    name: services
+
+services:
+
+  db:
+    image: ${DB_IMAGE}:${DB_IMAGE_TAG}
+    container_name: db
+    hostname: db
+    volumes:
+     - db_data:/var/lib/mysql
+
+    env_file:
+      - assets/env-files/db.env
+
+    ports:
+      - "3307:3307"
+
+  trust:
+    image: ${TRUST_IMAGE}:${TRUST_IMAGE_TAG}
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+      - cabundle:/etc/pki
+    environment:
+      - FORCE_TRUST_ANCHORS_UPDATE=1
+
+  iam:
+    container_name: iam-be
+    image: ${IAM_IMAGE}:${IAM_IMAGE_TAG}
+    
+    env_file:
+      - assets/env-files/login-service.env
+
+    ports:
+      - "1044:1044"
+
+    depends_on:
+      - db
+
+    # Workaround to avoid a service shut down when the db is still not UP
+    restart: unless-stopped
+
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+      - logs:/var/log/iam
+      - /dev/urandom:/dev/random
+      - ./assets/keystore.jwks:/indigo-iam/config/keystore.jwks:ro
+      - ./application-files/application-oidc.yml:/indigo-iam/config/application-oidc.yml:ro
+      - ./application-files/application-saml.yml:/indigo-iam/config/application-saml.yml:ro
+      - ./application-files/application-sp-saml.yml:/indigo-iam/config/application-sp-saml.yml:ro
+      - ./application-files/application-mysql.yml:/indigo-iam/config/application-mysql.yml:ro
+
+  nginx:
+    image: ${NGINX_IMAGE}:${NGINX_IMAGE_TAG}
+    ports:
+      - "443:443"
+
+    depends_on:
+      - trust
+      - iam
+
+    # to wait the trust service to finish
+    restart: on-failure
+
+    environment:
+      - TZ=UTC
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - ./assets/certs:/etc/nginx
+      - ./assets/vomsdir:/vomsdir
+      - ./assets/scripts:/scripts:ro
+      - ./assets/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./assets/nginx/iam.conf:/etc/nginx/conf.d/iam.conf:ro
+      - ./assets/nginx/auth_engine.js:/etc/nginx/njs/auth_engine.js:ro
+    
+    init: true
+
+    networks:
+      default:
+        aliases:
+          - iam.test.example
+      services:
+        aliases:
+          - iam.test.example
+
+  opa:
+    image: ${OPA_IMAGE}:${OPA_IMAGE_TAG}
+    volumes:
+      - ./assets/opa:/etc/opa
+    
+    entrypoint: opa run --server /etc/opa/policy.rego /etc/opa/data.json --log-level debug -c /etc/opa/config.yaml
+
+    init: true
+
+    networks:
+      services:

@@ -1,0 +1,30 @@
+oidc:
+  providers:
+  - name: IAM dev
+    issuer: https://iam-dev.cloud.cnaf.infn.it/
+    client:
+      clientId: 26ad21f1-ed5f-4638-a1c3-41a351894ef9
+      clientSecret: ALtqQ3pYtgs9aHGYDTl4BeCF8oNHG0M47TKaBy43t_CGrBSu9k386XGfK5wAUStlDdrFNoTzjxhsutnbPU3Tqp0
+      redirectUris: https://iam.test.example/openid_connect_login
+      scope: openid,profile,email
+    loginButton:
+      text: IAM-DEV SSO
+      style: btn-default
+      title: Sign in with your IAM-DEV account
+      image:
+        url:
+        faIcon:
+  - name: ORCID
+    issuer: https://orcid.org
+    client:
+      clientId: APP-PLS0ZX3E6MWCRAPT
+      clientSecret: 30425d05-e60a-4ab0-af74-b34624e7a73f
+      redirectUris: https://iam.test.example/openid_connect_login
+      scope: openid
+    loginButton:
+      text: ORCID
+      style: btn-default
+      title: Sign in with your ORCID account
+      image:
+        url:
+        faIcon:
