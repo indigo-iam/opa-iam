@@ -1,0 +1,66 @@
+version: "3.7"
+
+volumes:
+  trustanchors:
+  cabundle:
+
+networks:
+  default:
+    name: example
+  services:
+    name: services
+
+services:
+
+  trust:
+    image: ${TRUST_IMAGE}:${TRUST_IMAGE_TAG}
+    volumes:
+      - trustanchors:/etc/grid-security/certificates
+      - cabundle:/etc/pki
+    environment:
+      - FORCE_TRUST_ANCHORS_UPDATE=1
+
+  nginx:
+    image: ${NGINX_IMAGE}:${NGINX_IMAGE_TAG}
+    ports:
+      - "443:443"
+
+    depends_on:
+      - trust
+
+    # to wait the trust service to finish
+    restart: on-failure
+
+    environment:
+      - TZ=UTC
+
+    volumes:
+      - cabundle:/etc/pki
+      - trustanchors:/etc/grid-security/certificates
+      - ./assets/certs/hostcert.pem:/etc/nginx/opa.cert.pem
+      - ./assets/certs/hostkey.pem:/etc/nginx/opa.key.pem
+      - ./assets/vomsdir:/vomsdir
+      - ./assets/nginx/nginx.opa.conf:/etc/nginx/nginx.conf:ro
+      - ./assets/nginx/opa.conf:/etc/nginx/conf.d/opa.conf:ro
+    
+    init: true
+
+    networks:
+      default:
+        aliases:
+          - opa.test.example
+      services:
+        aliases:
+          - opa.test.example
+
+  opa:
+    image: ${OPA_IMAGE}:${OPA_IMAGE_TAG}
+    volumes:
+      - ./assets/opa:/etc/opa
+    
+    entrypoint: opa run --server /etc/opa/policy.rego /etc/opa/data.json --log-level debug -c /etc/opa/config.yaml
+
+    init: true
+
+    networks:
+      services:
