@@ -80,10 +80,11 @@ services:
     volumes:
       - cabundle:/etc/pki
       - trustanchors:/etc/grid-security/certificates
-      - ./assets/certs:/etc/nginx
+      - ./assets/certs/hostcert.pem:/etc/nginx/hostcert.pem
+      - ./assets/certs/hostkey.pem:/etc/nginx/hostkey.pem
       - ./assets/vomsdir:/vomsdir
       - ./assets/scripts:/scripts:ro
-      - ./assets/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./assets/nginx/nginx.iam.conf:/etc/nginx/nginx.conf:ro
       - ./assets/nginx/iam.conf:/etc/nginx/conf.d/iam.conf:ro
       - ./assets/nginx/auth_engine.js:/etc/nginx/njs/auth_engine.js:ro
     
