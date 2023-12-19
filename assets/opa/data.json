@@ -1,15 +1,52 @@
 {
-    "description": "Grant storage scopes to indigoiam group",
-    "actor": {
-        "id": "1234",
-        "name": "/indigoiam",
-        "type": "group"
-    },
-    "matchingPolicy": "PATH",
-    "rule": "PERMIT",
-    "scopes": [
-        "storage.read:/slash/",
-        "storage.create:/slash/",
-        "storage.modify:/slash/"
+    "policies": [
+        {
+            "actor": {
+                "id": "1234",
+                "name": "/indigoiam",
+                "type": "group"
+            },
+            "description": "Grant storage scopes to indigoiam group",
+            "matchingPolicy": "PATH",
+            "rule": "PERMIT",
+            "scopes": [
+                "storage.read:/slash/",
+                "storage.create:/slash/",
+                "storage.modify:/slash/"
+            ]
+        },
+        {
+            "actor": {
+                "id": "5678",
+                "name": "Test Client",
+                "type": "client"
+            },
+            "description": "Grant compute scopes to Test Client",
+            "matchingPolicy": "EQ",
+            "rule": "PERMIT",
+            "scopes": [
+                "storage.modify:/test",
+                "compute.read:/slash/"
+            ]
+        },
+        {
+            "id": 14,
+            "description": "Allow access to storage scopes for cms to escape/cms users",
+            "creationTime": "2020-03-05T14:27:56.000+01:00",
+            "lastUpdateTime": "2020-03-05T14:27:56.000+01:00",
+            "rule": "PERMIT",
+            "matchingPolicy": "PATH",
+            "account": null,
+            "group": {
+                "uuid": "97373f9d-3ba3-4006-b849-dbb6cca517d1",
+                "name": "escape/cms",
+                "location": "https://iam-escape.cloud.cnaf.infn.it/scim/Groups/97373f9d-3ba3-4006-b849-dbb6cca517d1"
+            },
+            "scopes": [
+                "storage.read:/cms",
+                "storage.create:/cms",
+                "storage.modify:/cms"
+            ]
+        }
     ]
 }
