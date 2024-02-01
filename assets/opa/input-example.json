@@ -1,0 +1,12 @@
+{
+    "id": "1234",
+    "type": "group",
+    "scopes": [
+        "openid",
+        "compute.read:/slash/pippo",
+        "storage.read:/slash/pippo",
+        "storage.read:/cms/pippo",
+        "storage.modify:/slash/",
+        "wlcg.groups:/pippo"
+    ]
+}
