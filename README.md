@@ -7,7 +7,7 @@ This repo contains a deployment of IAM where the Scope Policy API is replaced by
 Run the OPA service behind an NGINX reverse proxy with
 
 ```
-$ docker-compose -f docker-compose-opa -d
+$ docker-compose -f docker-compose-opa.yml up -d
 ```
 
 Check that OPA is up and running with
