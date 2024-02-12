@@ -1,6 +1,10 @@
 run_opa_tests:
   stage: test
-  image: busybox:latest
+  image:
+    name: ubuntu:22.04
   script:
-    - docker compose up -d
-    - docker compose exec opa bash -c "opa test /etc/opa/policy -v"
+    - apt update -y && apt install -y curl
+    - curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v0.55.0/opa_linux_amd64
+    - chmod 755 opa
+    - ./opa test /etc/opa/policy -v
+
