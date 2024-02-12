@@ -1,0 +1,6 @@
+run_opa_tests:
+  stage: test
+  image: busybox:latest
+  script:
+    - docker-compose up -d
+    - docker-compose exec opa bash -c "opa test /etc/opa/policy -v"

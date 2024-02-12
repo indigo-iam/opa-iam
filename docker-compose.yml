@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+
+  opa:
+    image: ${OPA_IMAGE}:${OPA_IMAGE_TAG}
+    volumes:
+      - ./assets/opa:/etc/opa
+    
+    entrypoint: opa run --server /etc/opa/policy/ /etc/opa/data.json --log-level debug -c /etc/opa/config.yaml
+
+    init: true
