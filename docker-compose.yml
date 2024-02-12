@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   opa:
-    image: ${OPA_IMAGE}:${OPA_IMAGE_TAG}
+    image: openpolicyagent/opa:latest-debug
     volumes:
       - ./assets/opa:/etc/opa
     
