@@ -10,7 +10,7 @@ Run the OPA service behind an NGINX reverse proxy with
 $ docker-compose -f docker-compose-opa.yml up -d
 ```
 
-and wait for the trust anchor job to finish ((cross-check that nginx is up and running afterwards).
+and wait for the trust anchor job to finish (cross-check that nginx is up and running afterwards).
 
 Check that OPA is up and running with
 
