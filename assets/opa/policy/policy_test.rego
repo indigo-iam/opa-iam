@@ -1,17 +1,18 @@
-package server_rules_test
+package scope_policies_test
 
 import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-import data.server_rules as rules
+import data.matching_algorithm
+import data.scope_policies as rules
 
 
 test_no_policies_matched if {
 
     mock_scopes := ["openid", "profile"] 
 
-    nb_matched_policies := rules.matched_policy 
+    nb_matched_policies := matching_algorithm.matched_policy 
         with input.scopes as mock_scopes 
         with data.policies as mock_policies
     
@@ -33,7 +34,7 @@ test_two_policies_matched if {
         ]
     }
 
-    nb_matched_policies := rules.matched_policy
+    nb_matched_policies := matching_algorithm.matched_policy
         with input as mock_input 
         with data.policies as mock_policies
 

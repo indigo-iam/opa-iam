@@ -1,28 +1,10 @@
-package server_rules
+package scope_policies
 
 import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-# OPA policy matching based on user, group, or client uuid
-matched_policy contains nb if {
-	some nb
-	input.id == data.policies[nb].actor.id
-	input.type == data.policies[nb].actor.type
-}
-
-# IAM policy matching based on group uuid
-matched_policy contains nb if {
-	some nb
-    input.type == object.keys(data.policies[nb])
-	input.id == data.policies[nb].group.uuid
-}
-
-# IAM policy matching based on user uuid
-matched_policy contains nb if {
-	some nb
-	input.id == data.policies[nb].acount.uuid
-}
+import data.matching_algorithm
 
 scopes_eq(policy_nb) := {scope |
 	data.policies[policy_nb].matchingPolicy == "EQ"
@@ -51,21 +33,21 @@ permit_policy(policy_nb) if data.policies[policy_nb].rule == "PERMIT"
 deny_policy(policy_nb) if data.policies[policy_nb].rule == "DENY"
 
 denied_scopes contains scope if {
-	some policy in matched_policy
+	some policy in matching_algorithm.matched_policy
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_eq(policy)
 }
 
 denied_scopes contains scope if {
-	some policy in matched_policy
+	some policy in matching_algorithm.matched_policy
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_path(policy)
 }
 
 denied_scopes contains scope if {
-	some policy in matched_policy
+	some policy in matching_algorithm.matched_policy
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_regexp(policy)
