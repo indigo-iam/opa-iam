@@ -1,0 +1,13 @@
+{
+    "actor": {
+        "id": "123456789",
+        "name": "test",
+        "type": "group"
+    },
+    "description": "Test",
+    "matchingPolicy": "REGEXP",
+    "rule": "DENY",
+    "scopes": [
+        "wlcg.groups:/pipp"
+    ]
+}
