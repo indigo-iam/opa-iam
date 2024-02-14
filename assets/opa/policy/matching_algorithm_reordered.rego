@@ -1,6 +1,8 @@
-package reordered_matching_algorithm
+package matching_algorithm_reordered
 
-import rego.v1
+import future.keywords.contains
+import future.keywords.if
+import future.keywords.in
 
 # OPA policy matching based on user, group, or client uuid
 matched_policy contains nb if {

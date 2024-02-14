@@ -4,7 +4,7 @@ import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-import data.matching_algorithm
+import data.matching_algorithm as policy_nb
 
 scopes_eq(policy_nb) := {scope |
 	data.policies[policy_nb].matchingPolicy == "EQ"
@@ -33,21 +33,21 @@ permit_policy(policy_nb) if data.policies[policy_nb].rule == "PERMIT"
 deny_policy(policy_nb) if data.policies[policy_nb].rule == "DENY"
 
 denied_scopes contains scope if {
-	some policy in matching_algorithm.matched_policy
+	some policy in policy_nb
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_eq(policy)
 }
 
 denied_scopes contains scope if {
-	some policy in matching_algorithm.matched_policy
+	some policy in policy_nb
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_path(policy)
 }
 
 denied_scopes contains scope if {
-	some policy in matching_algorithm.matched_policy
+	some policy in policy_nb
 	deny_policy(policy)
 	some scope in input.scopes
 	scope in scopes_regexp(policy)
