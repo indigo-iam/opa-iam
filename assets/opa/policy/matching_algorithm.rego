@@ -4,8 +4,6 @@ import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-import data.matching_algorithm as policy_nb
-
 # OPA policy matching based on user, group, or client uuid
 matched_policy contains nb if {
 	some nb
