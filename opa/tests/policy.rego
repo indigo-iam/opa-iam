@@ -1,11 +1,11 @@
-package scope_policies_test
+package test.scope_policies
 
 import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-import data.matching_algorithm
-import data.scope_policies as rules
+import data.policy.matching_algorithm
+import data.policy.scope_policies as rules
 
 
 test_no_policies_matched if {

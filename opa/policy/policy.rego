@@ -1,10 +1,8 @@
-package scope_policies
+package policy.scope_policies
 
-import future.keywords.contains
-import future.keywords.if
-import future.keywords.in
+import rego.v1
 
-import data.matching_algorithm as policy_nb
+import data.policy.matching_algorithm as policy_nb
 
 scopes_eq(policy_nb) := {scope |
 	data.policies[policy_nb].matchingPolicy == "EQ"

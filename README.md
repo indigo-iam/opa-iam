@@ -87,7 +87,7 @@ This repo contains also tests to the OPA rules.
 Run OPA tests with
 
 ```
-$ docker-compose exec opa bash -c "opa test /etc/opa/policy -v"
+$ docker-compose exec opa bash -c "opa test /etc/opa -v"
 /etc/opa/policy/matching_algorithm_test.rego:
 data.scope_policies_test.test_opa_format_policy_matched: PASS (445.645µs)
 data.scope_policies_test.test_missing_input_type_do_not_match_opa_policy_format: PASS (227.547µs)
