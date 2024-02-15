@@ -1,8 +1,6 @@
 package test.scope_policies
 
-import future.keywords.contains
-import future.keywords.if
-import future.keywords.in
+import rego.v1
 
 import data.policy.matching_algorithm_reordered as ma
 import data.policy.scope_policies as rules
