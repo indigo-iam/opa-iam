@@ -25,6 +25,13 @@ matched_policy contains nb if {
 	input.type == "account"
 }
 
+# IAM policy matching all
+matched_policy contains nb if {
+    some nb
+    data.policies[nb].group == null
+	data.policies[nb].account == null
+}
+
 reorder_policy_by_uuid[uuid] contains nb if {
 	some nb
 	uuid := data.policies[nb].account.uuid

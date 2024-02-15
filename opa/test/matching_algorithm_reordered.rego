@@ -4,7 +4,7 @@ import future.keywords.contains
 import future.keywords.if
 import future.keywords.in
 
-import data.policy.matching_algorithm as ma
+import data.policy.matching_algorithm_reordered as ma
 import data.policy.scope_policies as rules
 
 
