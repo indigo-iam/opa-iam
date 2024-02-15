@@ -4,8 +4,12 @@ services:
 
   opa:
     image: openpolicyagent/opa:latest-debug
+    ports:
+      - "8181:8181"
+    
     volumes:
-      - ./assets/opa:/etc/opa
+      - ./assets/opa:/opa-examples
+      - ./opa:/etc/opa
     
     entrypoint: opa run --server /etc/opa/policy/ /etc/opa/data.json --log-level debug -c /etc/opa/config.yaml
 

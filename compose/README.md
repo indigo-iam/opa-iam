@@ -10,7 +10,7 @@ Run the OPA service behind an NGINX reverse proxy with
 $ docker-compose -f compose/docker-compose-opa.yml up -d
 ```
 
-and wait for the trust anchor job to finish (cross-check that nginx is up and running afterwards).
+and wait for the trust anchor job to finish -- cross-check that nginx is up and running afterwards e.g. with `watch docker-compose ps`.
 
 To resolve the OPA hostname behind the docker network, add to your `/etc/hosts` file something like
 

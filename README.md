@@ -40,7 +40,7 @@ For instance, evaluate the output of the `denied_scopes` variable and enable the
 
 ```
 $ docker-compose exec opa bash
-$ opa eval -i /etc/opa/input-example.json -d /etc/opa/policy/policy.rego -d /etc/opa/policy/matching_algorithm.rego -d /etc/opa/data.json "data.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
+$ opa eval -i /opa-examples/input-example.json -d /etc/opa/policy/policy.rego -d /etc/opa/policy/matching_algorithm.rego -d /etc/opa/data.json "data.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
 [
   "compute.read:/slash/pippo",
   "storage.modify:/slash/"
@@ -102,12 +102,14 @@ data.scope_policies_test.test_missing_input_type_do_not_match_opa_policy_format:
 ## Open issues
 
 * Decide which policy takes the precedence, based on "actor" type (account, group or client)
-  * in IAM, account-level policies are applied first, then group-level policies are applied and finally policies that are not bound to any specific account or group are applied
+  * in IAM, _account-level policies are applied first, then group-level policies are applied and finally policies that are not bound to any specific account or group are applied_
   * in OPA, add the `client` type selector to match a policy -- just forgot to do it at the time of writing
 * Right now, we only consider `DENY` policies, _i.e._ all scopes are allowed and when a `DENY` policy is encountered we filter those scopes
-* Right now, we do not consider two policies applied to the same entity, if one is `ALLOW` and one is `DENY`, _i.e._, a group is denied to get a scope A but a user belonging to that group is allowed to get the scope A
+* Right now, we do not consider two policies applied to the same entity if one is `ALLOW` and one is `DENY`, _i.e._, a group is denied to get a scope A but a user belonging to that group is allowed to get the scope A
   * the input file is something like [this example](assets/opa/input-example.json), where only one entity is sent by IAM
-  * Let's decide the body IAM has to send and how to precess it in OPA (linked to previous points)
+  * let's decide the body IAM has to send and how to precess it in OPA (linked to previous points)
 * Right now, in OPA the `REGEXP` matching algorithm is just a prefix for `wlcg.groups:`
-  * don't think we use it in prod and I think matching groups would be the only use-case
+  * don't think we use it in production and I guess matching groups would be the only use-case
   * we can even remove it
+* Still not clear to me how an "OPA Admin" can add a policy (just `POST <opa-host>/v1/data` returns error since `input` key is not found in JSON body)
+* Do we want to add audience?
