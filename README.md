@@ -97,6 +97,21 @@ data.scope_policies_test.test_missing_input_type_do_not_match_opa_policy_format:
 
 ### Install OPA locally
 
+Download the latest OPA version to date for Linux (see [here](https://www.openpolicyagent.org/docs/latest/#1-download-opa) for other distributions) with
+
+```
+$ curl -L -o opa-cli https://github.com/open-policy-agent/opa/releases/download/v0.61.0/opa_linux_amd64
+$ chmod 755 opa-cli
+```
+
+All the above `opa` commands will run in the same way as with docker-compose, using `opa-cli`.
+
+Start the server with
+
+```
+$ opa-cli -s opa/ -c opa/config.yaml --log-level debug
+```
+
 ## Testing IAM + OPA
 
 ## Open issues
@@ -112,4 +127,4 @@ data.scope_policies_test.test_missing_input_type_do_not_match_opa_policy_format:
   * don't think we use it in production and I guess matching groups would be the only use-case
   * we can even remove it
 * Still not clear to me how an "OPA Admin" can add a policy (just `POST <opa-host>/v1/data` returns error since `input` key is not found in JSON body)
-* Do we want to add audience?
+* Do we want to add and evaluate also audience with OPA?
