@@ -102,10 +102,16 @@ $ chmod 755 opa-cli
 
 All the above `opa` commands will run in the same way as with docker-compose, using `opa-cli`.
 
+Build the OPA rego files (together with data) and create the bundle with
+
+```
+$ ./opa-cli build -b opa/ -o opa-bundle.tar.gz
+```
+
 Start the server with
 
 ```
-$ opa-cli -s opa/ -c opa/config.yaml --log-level debug
+$ ./opa-cli run --server -b opa-bundle.tar.gz -c opa/config.yaml --log-level debug
 ```
 
 ## Testing IAM + OPA
