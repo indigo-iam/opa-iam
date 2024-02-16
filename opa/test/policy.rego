@@ -2,8 +2,8 @@ package test.scope_policies
 
 import rego.v1
 
-import data.policy.matching_algorithm
-import data.policy.scope_policies as rules
+import data.rules.matching_algorithm
+import data.rules.scope_policies as rules
 
 
 test_no_policies_matched if {

@@ -1,4 +1,4 @@
-package policy.matching_algorithm_reordered
+package rules.matching_algorithm_reordered
 
 import rego.v1
 

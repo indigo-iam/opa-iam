@@ -2,8 +2,8 @@ package test.scope_policies
 
 import rego.v1
 
-import data.policy.matching_algorithm_reordered as ma
-import data.policy.scope_policies as rules
+import data.rules.matching_algorithm_reordered as ma
+import data.rules.scope_policies as rules
 
 
 test_opa_format_policy_matched if {

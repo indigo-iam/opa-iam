@@ -1,8 +1,8 @@
-package policy.scope_policies
+package rules.scope_policies
 
 import rego.v1
 
-import data.policy.matching_algorithm as policy_nb
+import data.rules.matching_algorithm as policy_nb
 
 scopes_eq(policy_nb) := {scope |
 	data.policies[policy_nb].matchingPolicy == "EQ"

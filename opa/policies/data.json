@@ -1,0 +1,63 @@
+[
+    {
+        "actor": {
+            "id": "1234",
+            "name": "/indigoiam",
+            "type": "group"
+        },
+        "description": "Grant storage scopes to indigoiam group",
+        "matchingPolicy": "EQ",
+        "rule": "DENY",
+        "scopes": [
+            "storage.read:/slash/",
+            "storage.create:/slash/",
+            "storage.modify:/slash/"
+        ]
+    },
+    {
+        "actor": {
+            "id": "1234",
+            "name": "Test Client",
+            "type": "group"
+        },
+        "description": "Grant compute scopes to Test Client",
+        "matchingPolicy": "PATH",
+        "rule": "DENY",
+        "scopes": [
+            "storage.modify:/test",
+            "compute.read:/slash/"
+        ]
+    },
+    {
+        "actor": {
+            "id": "999",
+            "name": "/indigoiam",
+            "type": "group"
+        },
+        "description": "Grant wlcg.group scope",
+        "matchingPolicy": "REGEXP",
+        "rule": "DENY",
+        "scopes": [
+            "wlcg.groups:/pipp"
+        ]
+    },
+    {
+        "account": null,
+        "creationTime": "2020-03-05T14:27:56.000+01:00",
+        "description": "Allow access to storage scopes for cms to escape/cms users",
+        "group": {
+            "location": "https://iam-escape.cloud.cnaf.infn.it/scim/Groups/97373f9d-3ba3-4006-b849-dbb6cca517d1",
+            "name": "escape/cms",
+            "uuid": "97373f9d-3ba3-4006-b849-dbb6cca517d1"
+        },
+        "id": 14,
+        "lastUpdateTime": "2020-03-05T14:27:56.000+01:00",
+        "matchingPolicy": "PATH",
+        "rule": "DENY",
+        "scopes": [
+            "storage.read:/cms",
+            "storage.create:/cms",
+            "storage.modify:/cms"
+        ]
+    }
+]

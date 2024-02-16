@@ -40,7 +40,7 @@ For instance, evaluate the output of the `denied_scopes` variable and enable the
 
 ```
 $ docker-compose exec opa bash
-$ opa eval -i /opa-examples/input-example.json -d /etc/opa/policy/policy.rego -d /etc/opa/policy/matching_algorithm.rego -d /etc/opa/data.json "data.policy.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
+$ opa eval -i /opa-examples/input-example.json -d /etc/opa/rules -d /opa-examples/data-10k.json  "data.rules.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
 [
   "compute.read:/slash/pippo",
   "storage.modify:/slash/"

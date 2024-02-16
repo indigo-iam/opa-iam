@@ -1,1 +1,1 @@
-default_decision: policy/scope_policies
+default_decision: rules/scope_policies
