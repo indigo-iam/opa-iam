@@ -24,10 +24,6 @@ $ curl http://localhost:8181 -s -d@assets/opa/input-example.json  | jq
     "storage.read:/cms/pippo",
     "storage.read:/slash/pippo",
     "wlcg.groups:/pippo"
-  ],
-  "matched_policy": [
-    0,
-    1
   ]
 }
 ```
@@ -126,6 +122,6 @@ $ opa-cli -s opa/ -c opa/config.yaml --log-level debug
 * Right now, in OPA the `REGEXP` matching algorithm is just a prefix for `wlcg.groups:`
   * don't think we use it in production and I guess matching groups would be the only use-case
   * we can even remove it
-* Still not clear to me how an "OPA Admin" can add a policy (just `POST <opa-host>/v1/data` returns error since `input` key is not found in JSON body)
 * Do we want to add and evaluate also audience with OPA?
-* Find a way to source from a file when testing.
+* Find a way to source from a file when testing
+* Not sure if there is a more friendly way to upload policies than JSON Patch

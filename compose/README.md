@@ -28,24 +28,6 @@ $ echo $?
 0
 ```
 
-OPA reorders the content rego files, data and input within a `data` object.
-Check its content with
-
-```
-$ curl https://opa.test.example/v1/data -k -s | jq .result
-{
-  "actor": {
-    "id": "1234",
-    "name": "/indigoiam",
-    "type": "group"
-  },
-  "description": "Grant storage scopes to indigoiam group",
-  "matchingPolicy": "PATH",
-  "rule": "PERMIT",
-...
-}
-```
-
 Query the OPA engine with an input file as example
 
 ```
@@ -60,13 +42,83 @@ $ curl https://opa.test.example -k -s -d@../assets/opa/input-example.json  | jq
     "storage.read:/cms/pippo",
     "storage.read:/slash/pippo",
     "wlcg.groups:/pippo"
-  ],
-  "matched_policy": [
-    0,
-    1
   ]
 }
 ```
+
+OPA reorders the content of rego files, data and input within a `data` object.
+Check its content with
+
+```
+$ curl https://opa.test.example/v1/data -k -s | jq .result
+{
+  "default_decision": "rules/scope_policies",
+  "policies": [
+    {
+      "actor": {
+        "id": "1234",
+        "name": "/indigoiam",
+        "type": "group"
+      },
+      "description": "Grant storage scopes to indigoiam group",
+      "matchingPolicy": "EQ",
+      "rule": "DENY",
+  ...
+}
+```
+
+OPA supports the JSON Patch operation to update a document, as for [RFC6902](https://datatracker.ietf.org/doc/html/rfc6902).
+For instance, in order to upload a policy which denies access to IAM admin scopes to the client identified by `1234`, one should submit the following request:
+
+```
+$ curl https://opa.test.example/v1/data/policies -k -XPATCH -H "Content-Type: application/json-patch+json" -d '[{"op": "add", "path": "-", "value": {
+    "actor": {
+        "id": "1234",
+        "name": "client-credentials",
+        "type": "client"
+    },
+    "description": "Deny access to admin scopes to client 1234",
+    "matchingPolicy": "EQ",
+    "rule": "DENY",
+    "scopes": [
+        "iam:admin.read",
+        "iam:admin.write"
+    ]
+  }
+}]'
+```
+
+Now, the client-vetting policy is appended to the previous ones
+
+```
+$ curl https://opa.test.example/v1/data/policies | jq .result
+[
+  {
+    "actor": {
+      "id": "1234",
+      "name": "/indigoiam",
+      "type": "group"
+    },
+    "description": "Grant storage scopes to indigoiam group",
+  ...
+  {
+    "actor": {
+      "id": "1234",
+      "name": "client-credentials",
+      "type": "client"
+    },
+    "description": "Deny access to admin scopes to client 1234",
+    "matchingPolicy": "EQ",
+    "rule": "DENY",
+    "scopes": [
+      "iam:admin.read",
+      "iam:admin.write"
+    ]
+  }
+]
+```
+
+and will be evaluated together with the existing policies.
 
 For more OPA commands please check the [README](../README.md) and [OPA documentation](https://www.openpolicyagent.org/docs/latest/).
 
