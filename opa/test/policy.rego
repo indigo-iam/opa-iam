@@ -40,6 +40,46 @@ test_two_policies_matched if {
 
 }
 
+test_eq_filter if {
+
+    mock_input := {
+        "id": "5678",
+        "type": "account",
+        "scopes": [
+            "openid",
+            "iam:admin.read",
+            "iam:admin.write"
+        ]
+    }
+
+    allowed_scopes := rules.filtered_scopes
+        with input as mock_input
+        with data.policies as mock_policies
+
+    allowed_scopes == {"openid"}
+}
+
+test_path_filter if {
+
+    mock_input := {
+        "id": "9101",
+        "type": "account",
+        "scopes": [
+            "openid",
+            "storage.read:/another-test-user",
+            "storage.create:/another-test-user",
+            "storage.modify:/another-test-user",
+            "storage.stage:/another-test-user"
+        ]
+    }
+
+    allowed_scopes := rules.filtered_scopes
+        with input as mock_input
+        with data.policies as mock_policies
+
+    allowed_scopes == {"openid"}
+}
+
 test_eq_path_filter if {
 
     mock_input := {
@@ -84,7 +124,7 @@ mock_policies := [
         {
             "actor": {
                 "id": "1234",
-                "name": "/indigoiam",
+                "name": "indigoiam",
                 "type": "group"
             },
             "description": "Deny storage scopes to indigoiam group",
@@ -99,15 +139,45 @@ mock_policies := [
         {
             "actor": {
                 "id": "1234",
-                "name": "Test Client",
+                "name": "indigoiam",
                 "type": "group"
             },
-            "description": "Deny storage/compute scopes to Test Client",
+            "description": "Deny storage/compute scopes to indigoiam group",
             "matchingPolicy": "PATH",
             "rule": "DENY",
             "scopes": [
                 "storage.modify:/test",
                 "compute.read:/slash/"
+            ]
+        },
+        {
+            "actor": {
+                "id": "5678",
+                "name": "test-user",
+                "type": "account"
+            },
+            "description": "Deny admin scopes to test-user",
+            "matchingPolicy": "EQ",
+            "rule": "DENY",
+            "scopes": [
+                "iam:admin.read",
+                "iam:admin.write"
+            ]
+        },
+        {
+            "actor": {
+                "id": "9101",
+                "name": "another-test-user",
+                "type": "account"
+            },
+            "description": "Deny storage scopes to another-test-user",
+            "matchingPolicy": "PATH",
+            "rule": "DENY",
+            "scopes": [
+                "storage.read:/",
+                "storage.create:/",
+                "storage.modify:/",
+                "storage.stage"
             ]
         },
         {
@@ -121,25 +191,6 @@ mock_policies := [
             "rule": "DENY",
             "scopes": [
                 "wlcg.groups:/pipp"
-            ]
-        },
-        {
-            "account": null,
-            "creationTime": "2020-03-05T14:27:56.000+01:00",
-            "description": "Deny access to storage scopes for cms to escape/cms users",
-            "group": {
-                "location": "https://iam-escape.cloud.cnaf.infn.it/scim/Groups/97373f9d-3ba3-4006-b849-dbb6cca517d1",
-                "name": "escape/cms",
-                "uuid": "97373f9d-3ba3-4006-b849-dbb6cca517d1"
-            },
-            "id": 14,
-            "lastUpdateTime": "2020-03-05T14:27:56.000+01:00",
-            "matchingPolicy": "PATH",
-            "rule": "DENY",
-            "scopes": [
-                "storage.read:/cms",
-                "storage.create:/cms",
-                "storage.modify:/cms"
             ]
         }
     ]

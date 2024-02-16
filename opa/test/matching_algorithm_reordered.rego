@@ -23,7 +23,7 @@ test_opa_format_policy_matched if {
     count(nb_matched_policies) == 1
 }
 
-
+test_opa_format_client_policy_matched if {
     mock_input_group := {
         "id": "1234",
         "type": "client"
