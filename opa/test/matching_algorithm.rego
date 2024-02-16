@@ -23,6 +23,28 @@ test_opa_format_policy_matched if {
     count(nb_matched_policies) == 1
 }
 
+test_opa_format_client_policy_matched if {
+
+    mock_input_group := {
+        "id": "1234",
+        "type": "client"
+    }
+
+    mock_data := [{
+            "actor": {
+                "id": "1234",
+                "name": "client-credentials",
+                "type": "client"
+            }
+        }]
+
+    nb_matched_policies := ma.matched_policy 
+        with input as mock_input_group
+        with data.policies as mock_data
+    
+    count(nb_matched_policies) == 1
+}
+
 test_missing_input_type_do_not_match_opa_policy_format if {
 
     mock_input := {"id": "1234"}

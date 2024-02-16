@@ -120,7 +120,7 @@ $ ./opa-cli run --server -b opa-bundle.tar.gz -c opa/config.yaml --log-level deb
 
 * Decide which policy takes the precedence, based on "actor" type (account, group or client)
   * in IAM, _account-level policies are applied first, then group-level policies are applied and finally policies that are not bound to any specific account or group are applied_
-  * in OPA, add the `client` type selector to match a policy -- just forgot to do it at the time of writing
+  * how does this fit with the client entity?
 * Right now, we only consider `DENY` policies, _i.e._ all scopes are allowed and when a `DENY` policy is encountered we filter those scopes
 * Right now, we do not consider two policies applied to the same entity if one is `ALLOW` and one is `DENY`, _i.e._, a group is denied to get a scope A but a user belonging to that group is allowed to get the scope A
   * the input file is something like [this example](assets/opa/input-example.json), where only one entity is sent by IAM
