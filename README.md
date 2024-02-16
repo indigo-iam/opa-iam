@@ -40,7 +40,7 @@ For instance, evaluate the output of the `denied_scopes` variable and enable the
 
 ```
 $ docker-compose exec opa bash
-$ opa eval -i /opa-examples/input-example.json -d /etc/opa/policy/policy.rego -d /etc/opa/policy/matching_algorithm.rego -d /etc/opa/data.json "data.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
+$ opa eval -i /opa-examples/input-example.json -d /etc/opa/policy/policy.rego -d /etc/opa/policy/matching_algorithm.rego -d /etc/opa/data.json "data.policy.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
 [
   "compute.read:/slash/pippo",
   "storage.modify:/slash/"
@@ -128,3 +128,4 @@ $ opa-cli -s opa/ -c opa/config.yaml --log-level debug
   * we can even remove it
 * Still not clear to me how an "OPA Admin" can add a policy (just `POST <opa-host>/v1/data` returns error since `input` key is not found in JSON body)
 * Do we want to add and evaluate also audience with OPA?
+* Find a way to source from a file when testing.
