@@ -28,6 +28,8 @@ $ echo $?
 0
 ```
 
+### Query OPA
+
 Query the OPA engine with an input file as example
 
 ```
@@ -45,6 +47,8 @@ $ curl https://opa.test.example -k -s -d@../assets/opa/input-example.json  | jq
   ]
 }
 ```
+
+### Update a document
 
 OPA reorders the content of rego files, data and input within a `data` object.
 Check its content with

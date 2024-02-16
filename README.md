@@ -124,4 +124,4 @@ $ opa-cli -s opa/ -c opa/config.yaml --log-level debug
   * we can even remove it
 * Do we want to add and evaluate also audience with OPA?
 * Find a way to source from a file when testing
-* Not sure if there is a more friendly way to upload policies than JSON Patch
+* Not sure if there is a more friendly way to upload policies than JSON Patch (documented in [OPA](https://www.openpolicyagent.org/docs/latest/rest-api/#patch-a-document) and [here](compose/README.md#update-a-document)).
