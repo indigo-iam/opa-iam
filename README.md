@@ -58,7 +58,7 @@ $ opa eval -i /opa-examples/input-example.json -d /etc/opa/rules -d /opa-example
 +----------+-----------+-----------+-----------+-----------+----------+----------+--------------+--------------------------------------------+
 | 63.377µs | 385.407µs | 119.999µs | 363.09µs  | 385.407µs | 24       | 13       | 2            | /etc/opa/policy/policy.rego:39             |
 | 59.457µs | 125.181µs | 78.179µs  | 123.796µs | 125.181µs | 24       | 13       | 2            | /etc/opa/policy/policy.rego:46             |
-| 54.621µs | 97.817µs  | 66.485µs  | 95.337µs  | 97.817µs  | 1        | 2        | 1            | /etc/opa/policy/matching_algorithm.rego:12 |
+| 54.621µs | 97.817µs  | 66.485µs  | 95.337µs  | 97.817µs  | 1        | 2        | 1            | /etc/opa/rules/entity_matching/entity_matching.rego:12 |
 | 44.85µs  | 93.39µs   | 57.815µs  | 90.187µs  | 93.39µs   | 24       | 12       | 2            | /etc/opa/policy/policy.rego:53             |
 | 37.416µs | 80.412µs  | 49.533µs  | 77.877µs  | 80.412µs  | 1        | 1        | 1            | data.scope_policies.denied_scopes          |
 | 31.168µs | 68.767µs  | 43.402µs  | 66.896µs  | 68.767µs  | 6        | 18       | 1            | /etc/opa/policy/policy.rego:12             |
@@ -84,9 +84,9 @@ Run OPA tests with
 
 ```
 $ docker-compose exec opa bash -c "opa test /etc/opa -v"
-/etc/opa/policy/matching_algorithm_test.rego:
-data.scope_policies_test.test_opa_format_policy_matched: PASS (445.645µs)
-data.scope_policies_test.test_missing_input_type_do_not_match_opa_policy_format: PASS (227.547µs)
+/etc/opa/test/entity_matching/entity_matching.rego:
+data.test.entity_matching.test_opa_format_policy_matched: PASS (445.645µs)
+data.test.entity_matching.test_missing_input_type_do_not_match_opa_policy_format: PASS (227.547µs)
 ...
 
 ```
@@ -120,14 +120,16 @@ $ ./opa-cli run --server -b opa-bundle.tar.gz -c opa/config.yaml --log-level deb
 
 * Decide which policy takes the precedence, based on "actor" type (account, group or client)
   * in IAM, _account-level policies are applied first, then group-level policies are applied and finally policies that are not bound to any specific account or group are applied_
-  * how does this fit with the client entity?
-* Right now, we only consider `DENY` policies, _i.e._ all scopes are allowed and when a `DENY` policy is encountered we filter those scopes
-* Right now, we do not consider two policies applied to the same entity if one is `ALLOW` and one is `DENY`, _i.e._, a group is denied to get a scope A but a user belonging to that group is allowed to get the scope A
-  * the input file is something like [this example](assets/opa/input-example.json), where only one entity is sent by IAM
-  * let's decide the body IAM has to send and how to precess it in OPA (linked to previous points)
+  * it is luckily reproduced in this branch, but the logic looks like a bit complicated
+  * how does this fit with the client actor?
+* Right now, a `PERMIT` policy overrides a `DENY` one for the same actor and the same scope, _i.e._ if a group is denied to get a scope A, but another group the user belongs to is allowed, the scope A will appear in the token -- is this fine?
+* Let's decide the body IAM has to send to OPA -- looks like [this](assets/opa/input-example.json) in this branch
 * Right now, in OPA the `REGEXP` matching algorithm is just a prefix for `wlcg.groups:`
+  * do we want to apply a real regexp algorithm?
   * don't think we use it in production and I guess matching groups would be the only use-case
   * we can even remove it
-* Do we want to add and evaluate also audience with OPA?
+* Do we want to add and evaluate also audience with OPA? How?
+* Not sure if there is a more friendly way to upload policies than JSON Patch (documented in [OPA](https://www.openpolicyagent.org/docs/latest/rest-api/#patch-a-document) and [here](compose/README.md#update-a-document))
+* Do we want to keep this repo or migrate it to indigo-iam?
 * Find a way to source from a file when testing
-* Not sure if there is a more friendly way to upload policies than JSON Patch (documented in [OPA](https://www.openpolicyagent.org/docs/latest/rest-api/#patch-a-document) and [here](compose/README.md#update-a-document)).
+* If someone has in mind some test cases to add is very welcome!
