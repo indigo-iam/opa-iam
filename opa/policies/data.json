@@ -29,19 +29,6 @@
         ]
     },
     {
-        "actor": {
-            "id": "999",
-            "name": "/indigoiam",
-            "type": "group"
-        },
-        "description": "Grant wlcg.group scope",
-        "matchingPolicy": "REGEXP",
-        "rule": "DENY",
-        "scopes": [
-            "wlcg.groups:/pipp"
-        ]
-    },
-    {
         "account": null,
         "creationTime": "2020-03-05T14:27:56.000+01:00",
         "description": "Allow access to storage scopes for cms to escape/cms users",

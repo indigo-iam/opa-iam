@@ -16,14 +16,6 @@ scopes_path(policy_nb) := {scope |
 	startswith(scope, scope_path)
 }
 
-scopes_regexp(policy_nb) := {scope |
-	data.policies[policy_nb].matchingPolicy == "REGEXP"
-	some scope in input.scopes
-	some scope_regexp in data.policies[policy_nb].scopes
-	startswith(scope_regexp, "wlcg.groups:")
-	startswith(scope, scope_regexp)
-}
-
 matched_scopes(policy_nb) := { scope |
-	some scope in scopes_eq(policy_nb) | scopes_path(policy_nb) | scopes_regexp(policy_nb)
+	some scope in scopes_eq(policy_nb) | scopes_path(policy_nb)
 }

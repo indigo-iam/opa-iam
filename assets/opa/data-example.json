@@ -5,9 +5,9 @@
         "type": "group"
     },
     "description": "Test",
-    "matchingPolicy": "REGEXP",
+    "matchingPolicy": "PATH",
     "rule": "DENY",
     "scopes": [
-        "wlcg.groups:/pipp"
+        "storage.read:/123456789"
     ]
 }

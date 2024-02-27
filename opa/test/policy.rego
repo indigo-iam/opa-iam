@@ -182,157 +182,6 @@ test_eq_path_filter_with_same_scopes if {
     denied_scopes == {"storage.read:/pippo", "storage.create:/pippo"}
 }
 
-test_regexp_filter if {
-
-    mock_input := {
-        "user": {"groups": ["999"]},
-        "scopes": [
-            "openid",
-            "wlcg.groups:/pippo"
-        ]
-    }
-
-    allowed_scopes := rules.filtered_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    allowed_scopes == {"openid"}
-
-    denied_scopes := rules.denied_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    denied_scopes == {"wlcg.groups:/pippo"}
-}
-
-test_eq_path_regexp_filter_with_different_scopes if {
-
-    mock_input := {
-        "user": {
-            "id": "999",
-            "groups": ["1234","5678"]
-        },
-        "scopes": [
-            "openid",
-            "storage.read:/pippo",
-            "storage.create:/pippo",
-            "wlcg.groups:/pippo/pluto"
-        ]
-    }
-
-    mock_policies := [{
-            "actor": {
-                "id": "999",
-                "name": "indigoiam",
-                "type": "account"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "EQ",
-            "scopes": [
-                "storage.read:/pippo",
-            ]
-        },
-        {
-            "actor": {
-                "id": "1234",
-                "name": "indigoiam",
-                "type": "group"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "PATH",
-            "scopes": [
-                "storage.create:/"
-            ]
-        },
-        {
-            "actor": {
-                "id": "5678",
-                "name": "indigoiam",
-                "type": "group"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "REGEXP",
-            "scopes": [
-                "wlcg.groups:/pippo"
-            ]
-        }]
-
-    allowed_scopes := rules.filtered_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    allowed_scopes == {"openid"}
-
-    denied_scopes := rules.denied_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    denied_scopes == {"storage.read:/pippo", "storage.create:/pippo", "wlcg.groups:/pippo/pluto"}
-}
-
-test_eq_path_regexp_filter_with_same_scopes if {
-
-    mock_input := {
-        "user": {
-            "id": "999",
-            "groups": ["1234","5678"]
-        },
-        "scopes": [
-            "openid",
-            "wlcg.groups:/pippo/pluto"
-        ]
-    }
-
-    mock_policies := [{
-            "actor": {
-                "id": "999",
-                "name": "indigoiam",
-                "type": "account"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "EQ",
-            "scopes": [
-                "wlcg.groups:/pippo/pluto",
-            ]
-        },
-        {
-            "actor": {
-                "id": "1234",
-                "name": "indigoiam",
-                "type": "group"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "PATH",
-            "scopes": [
-                "wlcg.groups:/pippo"
-            ]
-        },
-        {
-            "actor": {
-                "id": "5678",
-                "name": "indigoiam",
-                "type": "group"
-            },
-            "rule": "DENY",
-            "matchingPolicy": "REGEXP",
-            "scopes": [
-                "wlcg.groups:/"
-            ]
-        }]
-
-    allowed_scopes := rules.filtered_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    allowed_scopes == {"openid"}
-
-    denied_scopes := rules.denied_scopes
-        with input as mock_input
-        with data.policies as mock_policies
-
-    denied_scopes == {"wlcg.groups:/pippo/pluto"}
-}
-
 test_permit_account_policy_wins if {
 
     mock_input := {
@@ -377,9 +226,9 @@ test_permit_account_policy_wins if {
                 "type": "group"
             },
             "rule": "DENY",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/"
+                "wlcg.groups:/pippo/pluto"
             ]
         },
         {
@@ -444,9 +293,9 @@ test_deny_account_policy_wins if {
                 "type": "group"
             },
             "rule": "PERMIT",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/"
+                "wlcg.groups:/pippo/pluto"
             ]
         },
         {
@@ -600,9 +449,9 @@ test_permit_rule_in_multiple_group_policy_wins_over_all if {
                 "type": "group"
             },
             "rule": "DENY",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/"
+                "wlcg.groups:/pippo/pluto"
             ]
         },
         {
@@ -656,9 +505,9 @@ test_deny_rule_in_multiple_group_policy_wins_over_all if {
                 "type": "group"
             },
             "rule": "DENY",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/"
+                "wlcg.groups:/pippo/pluto"
             ]
         },
         {
@@ -729,7 +578,7 @@ test_permit_all_policy_applies_last if {
             "account": null,
             "group": null,
             "rule": "PERMIT",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "PATH",
             "scopes": [
                 "wlcg.groups:/pippo/pluto"
             ]
@@ -793,7 +642,7 @@ test_deny_all_policy_applies_last if {
             "account": null,
             "group": null,
             "rule": "DENY",
-            "matchingPolicy": "REGEXP",
+            "matchingPolicy": "PATH",
             "scopes": [
                 "wlcg.groups:/pippo/pluto"
             ]
@@ -871,19 +720,6 @@ mock_policies := [
                 "storage.create:/",
                 "storage.modify:/",
                 "storage.stage"
-            ]
-        },
-        {
-            "actor": {
-                "id": "999",
-                "name": "/indigoiam",
-                "type": "group"
-            },
-            "description": "Deny wlcg.group scope to indigoiam group",
-            "matchingPolicy": "REGEXP",
-            "rule": "DENY",
-            "scopes": [
-                "wlcg.groups:/pipp"
             ]
         }
     ]

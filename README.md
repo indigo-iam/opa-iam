@@ -119,16 +119,11 @@ $ ./opa-cli run --server -b opa-bundle.tar.gz -c opa/config.yaml --log-level deb
 ## Open issues
 
 * Decide which policy takes the precedence, based on "actor" type (account, group or client)
-  * in IAM, _account-level policies are applied first, then group-level policies are applied and finally policies that are not bound to any specific account or group are applied_
-  * it is luckily reproduced in this branch, but the logic looks like a bit complicated
-  * how does this fit with the client actor?
-* Right now, a `PERMIT` policy overrides a `DENY` one for the same actor and the same scope, _i.e._ if a group is denied to get a scope A, but another group the user belongs to is allowed, the scope A will appear in the token -- is this fine?
-* Let's decide the body IAM has to send to OPA -- looks like [this](assets/opa/input-example.json) in this branch
-* Right now, in OPA the `REGEXP` matching algorithm is just a prefix for `wlcg.groups:`
-  * do we want to apply a real regexp algorithm?
-  * don't think we use it in production and I guess matching groups would be the only use-case
-  * we can even remove it
+  * [issue 2](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/2)
+* Need to implement a real PATH algorithm to match scopes -- right now is just a prefix match
+  * [issue 3](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/3)
 * Do we want to add and evaluate also audience with OPA? How?
+  * [issue 1](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/1)
 * Not sure if there is a more friendly way to upload policies than JSON Patch (documented in [OPA](https://www.openpolicyagent.org/docs/latest/rest-api/#patch-a-document) and [here](compose/README.md#update-a-document))
 * Do we want to keep this repo or migrate it to indigo-iam?
 * Find a way to source from a file when testing
