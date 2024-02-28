@@ -559,7 +559,7 @@ test_permit_all_policy_applies_last if {
             "rule": "DENY",
             "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/pippo",
+                "wlcg.groups:/pippo"
             ]
         },
         {
@@ -623,7 +623,7 @@ test_deny_all_policy_applies_last if {
             "rule": "PERMIT",
             "matchingPolicy": "EQ",
             "scopes": [
-                "wlcg.groups:/pippo",
+                "wlcg.groups:/pippo"
             ]
         },
         {

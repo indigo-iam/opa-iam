@@ -4,7 +4,7 @@
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "PERMIT",
