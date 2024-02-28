@@ -34,21 +34,21 @@ test_missing_group_type_not_match_opa_entity_format if {
     not policy_is_group
 }
 
-test_opa_format_account_entity_matched if {
+test_opa_format_subject_entity_matched if {
 
     mock_data := [{
             "actor": {
-                "type": "account"
+                "type": "subject"
             }
         }]
 
-    policy_is_account := rules.account_policy(0) 
+    policy_is_subject := rules.subject_policy(0) 
         with data.policies as mock_data
     
-    policy_is_account
+    policy_is_subject
 }
 
-test_missing_account_type_not_match_opa_entity_format if {
+test_missing_subject_type_not_match_opa_entity_format if {
 
     mock_data := [{
                 "actor": {
@@ -57,39 +57,10 @@ test_missing_account_type_not_match_opa_entity_format if {
                 }
         }]
 
-    policy_is_account := rules.account_policy(0) 
+    policy_is_subject := rules.subject_policy(0) 
         with data.policies as mock_data
     
-    not policy_is_account
-}
-
-test_opa_format_client_entity_matched if {
-
-    mock_data := [{
-            "actor": {
-                "type": "client"
-            }
-        }]
-
-    policy_is_client := rules.client_policy(0)  
-        with data.policies as mock_data
-    
-    policy_is_client
-}
-
-test_missing_client_type_not_match_opa_entity_format if {
-
-    mock_data := [{
-            "actor": {
-                    "id": "1234",
-                    "name": "Test Client"
-                }
-        }]
-
-    policy_is_client := rules.client_policy(0) 
-        with data.policies as mock_data
-    
-    not policy_is_client
+    not policy_is_subject
 }
 
 test_iam_format_group_entity_matched if {
@@ -150,10 +121,10 @@ test_iam_format_account_entity_matched if {
             "group": null
         }]
 
-    policy_is_account := rules.account_policy(0) 
+    policy_is_subject := rules.subject_policy(0) 
         with data.policies as mock_data
     
-    policy_is_account
+    policy_is_subject
 }
 
 test_missing_account_uuid_not_match_iam_entity_format if {
@@ -166,10 +137,10 @@ test_missing_account_uuid_not_match_iam_entity_format if {
             "group": null
         }]
 
-    policy_is_account := rules.account_policy(0) 
+    policy_is_subject := rules.subject_policy(0) 
         with data.policies as mock_data
     
-    not policy_is_account
+    not policy_is_subject
 }
 
 test_missing_group_key_not_match_iam_account_format if {
@@ -182,10 +153,10 @@ test_missing_group_key_not_match_iam_account_format if {
             }
         }]
 
-    policy_is_account := rules.account_policy(0) 
+    policy_is_subject := rules.subject_policy(0) 
         with data.policies as mock_data
     
-    not policy_is_account
+    not policy_is_subject
 }
 
 test_iam_format_all_entity_matched if {

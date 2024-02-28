@@ -8,9 +8,9 @@ import data.rules.entity_matching as policy_nb
 
 default scope_permission(_) := "PERMIT"
 
-matched_policies_by_scope[scope] contains {"account": permission} if {
+matched_policies_by_scope[scope] contains {"subject": permission} if {
     some policy in policy_nb.matched_policy
-    account_policy(policy)
+    subject_policy(policy)
     some scope in matched_scopes(policy)
     permission := data.policies[policy].rule
 }
@@ -29,11 +29,11 @@ matched_policies_by_scope[scope] contains {"all": permission} if {
     permission := data.policies[policy].rule
 }
 
-account_permission(scope) := "PERMIT" if {
-    matched_policies_by_scope[scope][_].account == "PERMIT"
-    matched_policies_by_scope[scope][_].account == "DENY"
+subject_permission(scope) := "PERMIT" if {
+    matched_policies_by_scope[scope][_].subject == "PERMIT"
+    matched_policies_by_scope[scope][_].subject == "DENY"
 } else := rule if {
-    rule := matched_policies_by_scope[scope][_].account
+    rule := matched_policies_by_scope[scope][_].subject
 }
 
 group_permission(scope) := "PERMIT" if {
@@ -51,7 +51,7 @@ all_permission(scope) := "PERMIT" if {
 }
 
 scope_permission(scope) := rule if {
-    rule := account_permission(scope)
+    rule := subject_permission(scope)
 } else := rule if {
     rule := group_permission(scope)
 } else := rule if {

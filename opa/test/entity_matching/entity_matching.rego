@@ -24,7 +24,7 @@ test_opa_format_group_policy_matched if {
 
 test_missing_input_group_not_match_opa_policy_format if {
 
-    mock_input_user_id := "1234"
+    mock_input_actor_subject := "1234"
 
     mock_data := [{
             "actor": {
@@ -35,19 +35,19 @@ test_missing_input_group_not_match_opa_policy_format if {
         }]
 
     nb_matched_policies := em.matched_policy 
-        with input.user.id as mock_input_user_id
+        with input.actor.subject as mock_input_actor_subject
         with data.policies as mock_data
     
     count(nb_matched_policies) == 0
 }
 
-test_opa_format_account_policy_matched if {
+test_opa_format_subject_policy_matched if {
 
     mock_data := [{
             "actor": {
                 "id": "1234",
                 "name": "Test Account",
-                "type": "account"
+                "type": "subject"
             }
         }]
 
@@ -58,56 +58,20 @@ test_opa_format_account_policy_matched if {
     count(nb_matched_policies) == 1
 }
 
-test_missing_input_user_id_not_match_opa_policy_format if {
+test_missing_input_actor_subject_not_match_opa_policy_format if {
 
-    mock_input_user_groups := ["1234"]
+    mock_input_actor_groups := ["1234"]
 
     mock_data := [{
             "actor": {
                 "id": "1234",
                 "name": "Test User",
-                "type": "account"
+                "type": "subject"
             }
         }]
 
     nb_matched_policies := em.matched_policy 
-        with input.user.groups as mock_input_user_groups
-        with data.policies as mock_data
-    
-    count(nb_matched_policies) == 0
-}
-
-test_opa_format_client_policy_matched if {
-
-    mock_input_client_id := "1234"
-
-    mock_data := [{
-            "actor": {
-                "id": "1234",
-                "name": "client-credentials",
-                "type": "client"
-            }
-        }]
-
-    nb_matched_policies := em.matched_policy 
-        with input.client.id as mock_input_client_id
-        with data.policies as mock_data
-    
-    count(nb_matched_policies) == 1
-}
-
-test_missing_input_client_not_match_opa_policy_format if {
-
-    mock_data := [{
-            "actor": {
-                "id": "1234",
-                "name": "Test Client",
-                "type": "client"
-            }
-        }]
-
-    nb_matched_policies := em.matched_policy 
-        with input as mock_input_account
+        with input.actor.groups as mock_input_actor_groups
         with data.policies as mock_data
     
     count(nb_matched_policies) == 0
@@ -199,7 +163,7 @@ test_iam_format_account_policy_matched if {
 
 test_missing_input_user_id_do_not_match_iam_policy_format if {
 
-    mock_input_user_groups := ["1234"]
+    mock_input_actor_groups := ["1234"]
 
     mock_data := [{
             "account": {
@@ -211,7 +175,7 @@ test_missing_input_user_id_do_not_match_iam_policy_format if {
         }]
 
     nb_matched_policies := em.matched_policy 
-        with input.user.groups as mock_input_user_groups
+        with input.actor.groups as mock_input_actor_groups
         with data.policies as mock_data
     
     count(nb_matched_policies) == 0
@@ -250,7 +214,7 @@ test_same_id_matches_only_account if {
             "actor": {
                 "id": "1234",
                 "name": "Test User",
-                "type": "account"}
+                "type": "subject"}
         }]
 
     nb_matched_policies := em.matched_policy 
@@ -276,22 +240,6 @@ test_same_id_matches_only_group if {
     count(nb_matched_policies) == 1
 }
 
-test_same_id_matches_only_client if {
-
-    mock_data := [{
-            "actor": {
-                "id": "1234",
-                "name": "Test Client",
-                "type": "client"}
-        }]
-
-    nb_matched_policies := em.matched_policy 
-        with input as mock_input_same_id
-        with data.policies as mock_data
-    
-    count(nb_matched_policies) == 1
-}
-
 test_same_id_matches_all_policies if {
 
     mock_data := [
@@ -299,7 +247,7 @@ test_same_id_matches_all_policies if {
             "actor": {
                 "id": "1234",
                 "name": "Test User",
-                "type": "account"}
+                "type": "subject"}
         },
         {
             "actor": {
@@ -311,7 +259,7 @@ test_same_id_matches_all_policies if {
             "actor": {
                 "id": "1234",
                 "name": "Test Client",
-                "type": "client"}
+                "type": "subject"}
         }]
 
     nb_matched_policies := em.matched_policy 
@@ -322,22 +270,19 @@ test_same_id_matches_all_policies if {
 }
 
 mock_input_group := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234"]
         }
     }
 
 mock_input_account := {
-        "user": {"id": "1234"}
+        "actor": {"subject": "1234"}
     }
 
 mock_input_same_id := {
-        "user": {
-            "id": "1234",
+        "actor": {
+            "subject": "1234",
             "groups": ["1234"]
-        },
-        "client": {
-            "id": "1234"
         }
     }

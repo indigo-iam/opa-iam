@@ -20,8 +20,8 @@ test_no_policies_matched if {
 test_two_policies_matched if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234"]
         },
         "scopes": [
@@ -45,7 +45,7 @@ test_two_policies_matched if {
 test_eq_filter if {
 
     mock_input := {
-        "user": {"id": "5678"},
+        "actor": {"subject": "5678"},
         "scopes": [
             "openid",
             "iam:admin.read",
@@ -69,7 +69,7 @@ test_eq_filter if {
 test_path_filter if {
 
     mock_input := {
-        "user": {"id": "9101"},
+        "actor": {"subject": "9101"},
         "scopes": [
             "openid",
             "storage.read:/another-test-user",
@@ -98,8 +98,8 @@ test_path_filter if {
 test_eq_path_filter_with_different_scopes if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234"]
         },
         "scopes": [
@@ -131,8 +131,8 @@ test_eq_path_filter_with_different_scopes if {
 test_eq_path_filter_with_same_scopes if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234"]
         },
         "scopes": [
@@ -146,7 +146,7 @@ test_eq_path_filter_with_same_scopes if {
             "actor": {
                 "id": "999",
                 "name": "indigoiam",
-                "type": "account"
+                "type": "subject"
             },
             "rule": "DENY",
             "matchingPolicy": "EQ",
@@ -182,11 +182,11 @@ test_eq_path_filter_with_same_scopes if {
     denied_scopes == {"storage.read:/pippo", "storage.create:/pippo"}
 }
 
-test_permit_account_policy_wins if {
+test_permit_subject_policy_wins if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -199,7 +199,7 @@ test_permit_account_policy_wins if {
             "actor": {
                 "id": "999",
                 "name": "indigoiam",
-                "type": "account"
+                "type": "subject"
             },
             "rule": "PERMIT",
             "matchingPolicy": "EQ",
@@ -249,11 +249,11 @@ test_permit_account_policy_wins if {
 
 }
 
-test_deny_account_policy_wins if {
+test_deny_subject_policy_wins if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -266,7 +266,7 @@ test_deny_account_policy_wins if {
             "actor": {
                 "id": "999",
                 "name": "indigoiam",
-                "type": "account"
+                "type": "subject"
             },
             "rule": "DENY",
             "matchingPolicy": "EQ",
@@ -325,8 +325,8 @@ test_deny_account_policy_wins if {
 test_permit_group_policy_wins_over_all if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -369,8 +369,8 @@ test_permit_group_policy_wins_over_all if {
 test_deny_group_policy_wins_over_all if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -419,8 +419,8 @@ test_deny_group_policy_wins_over_all if {
 test_permit_rule_in_multiple_group_policy_wins_over_all if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -475,8 +475,8 @@ test_permit_rule_in_multiple_group_policy_wins_over_all if {
 test_deny_rule_in_multiple_group_policy_wins_over_all if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -537,8 +537,8 @@ test_deny_rule_in_multiple_group_policy_wins_over_all if {
 test_permit_all_policy_applies_last if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -554,7 +554,7 @@ test_permit_all_policy_applies_last if {
             "actor": {
                 "id": "999",
                 "name": "indigoiam",
-                "type": "account"
+                "type": "subject"
             },
             "rule": "DENY",
             "matchingPolicy": "EQ",
@@ -601,8 +601,8 @@ test_permit_all_policy_applies_last if {
 test_deny_all_policy_applies_last if {
 
     mock_input := {
-        "user": {
-            "id": "999",
+        "actor": {
+            "subject": "999",
             "groups": ["1234","5678"]
         },
         "scopes": [
@@ -618,7 +618,7 @@ test_deny_all_policy_applies_last if {
             "actor": {
                 "id": "999",
                 "name": "indigoiam",
-                "type": "account"
+                "type": "subject"
             },
             "rule": "PERMIT",
             "matchingPolicy": "EQ",
@@ -696,7 +696,7 @@ mock_policies := [
             "actor": {
                 "id": "5678",
                 "name": "test-user",
-                "type": "account"
+                "type": "subject"
             },
             "description": "Deny admin scopes to test-user",
             "matchingPolicy": "EQ",
@@ -710,7 +710,7 @@ mock_policies := [
             "actor": {
                 "id": "9101",
                 "name": "another-test-user",
-                "type": "account"
+                "type": "subject"
             },
             "description": "Deny storage scopes to another-test-user",
             "matchingPolicy": "PATH",

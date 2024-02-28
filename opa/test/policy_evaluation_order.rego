@@ -4,11 +4,11 @@ import rego.v1
 
 import data.rules
 
-test_account_permit_policy_overrides_group if {
+test_subject_permit_policy_overrides_group if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -21,7 +21,7 @@ test_account_permit_policy_overrides_group if {
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "PERMIT",
@@ -57,11 +57,11 @@ test_account_permit_policy_overrides_group if {
 
 }
 
-test_account_deny_policy_overrides_group if {
+test_subject_deny_policy_overrides_group if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -74,7 +74,7 @@ test_account_deny_policy_overrides_group if {
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "DENY",
@@ -113,8 +113,8 @@ test_account_deny_policy_overrides_group if {
 test_group_permit_policy_overrides_all if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -164,8 +164,8 @@ test_group_permit_policy_overrides_all if {
 test_group_deny_policy_overrides_all if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -215,8 +215,8 @@ test_group_deny_policy_overrides_all if {
 test_all_deny_policy_applies_last if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -229,7 +229,7 @@ test_all_deny_policy_applies_last if {
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "PERMIT",
@@ -283,8 +283,8 @@ test_all_deny_policy_applies_last if {
 test_all_permit_policy_applies_last if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -297,7 +297,7 @@ test_all_permit_policy_applies_last if {
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "DENY",
@@ -351,8 +351,8 @@ test_all_permit_policy_applies_last if {
 test_scope_not_in_policy_is_allowed if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678"]
             },
             "scopes": [
@@ -365,7 +365,7 @@ test_scope_not_in_policy_is_allowed if {
             "actor": {
                 "id": "1234",
                 "name": "Test account",
-                "type": "account"
+                "type": "subject"
             },
             "matchingPolicy": "EQ",
             "rule": "DENY",
@@ -407,8 +407,8 @@ test_scope_not_in_policy_is_allowed if {
 test_permit_rule_in_multiple_group_policies_wins if {
 
     mock_input := {
-            "user": {
-                "id": "1234",
+            "actor": {
+                "subject": "1234",
                 "groups": ["5678", "9101"]
             },
             "scopes": [
@@ -421,7 +421,7 @@ test_permit_rule_in_multiple_group_policies_wins if {
             "actor": {
                 "id": "5678",
                 "name": "Test Group",
-                "type": "group1"
+                "type": "group"
             },
             "matchingPolicy": "EQ",
             "rule": "DENY",
@@ -433,7 +433,7 @@ test_permit_rule_in_multiple_group_policies_wins if {
             "actor": {
                 "id": "9101",
                 "name": "Test Group",
-                "type": "group2"
+                "type": "group"
             },
             "matchingPolicy": "EQ",
             "rule": "PERMIT",

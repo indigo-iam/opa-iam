@@ -5,27 +5,27 @@
             "name": "/indigoiam",
             "type": "group"
         },
-        "description": "Grant storage scopes to indigoiam group",
-        "matchingPolicy": "EQ",
+        "description": "Deny storage scopes to indigoiam group",
+        "matchingPolicy": "PATH",
         "rule": "DENY",
         "scopes": [
-            "storage.read:/slash/",
-            "storage.create:/slash/",
-            "storage.modify:/slash/"
+            "storage.read:/",
+            "storage.create:/",
+            "storage.modify:/"
         ]
     },
     {
         "actor": {
             "id": "1234",
             "name": "Test Client",
-            "type": "group"
+            "type": "subject"
         },
         "description": "Grant compute scopes to Test Client",
-        "matchingPolicy": "PATH",
-        "rule": "DENY",
+        "matchingPolicy": "EQ",
+        "rule": "PERMIT",
         "scopes": [
-            "storage.modify:/test",
-            "compute.read:/slash/"
+            "compute.read",
+            "compute.modify"
         ]
     },
     {
@@ -40,7 +40,7 @@
         "id": 14,
         "lastUpdateTime": "2020-03-05T14:27:56.000+01:00",
         "matchingPolicy": "PATH",
-        "rule": "DENY",
+        "rule": "PERMIT",
         "scopes": [
             "storage.read:/cms",
             "storage.create:/cms",

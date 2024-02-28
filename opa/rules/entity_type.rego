@@ -4,16 +4,15 @@ import future.keywords.if
 import future.keywords.in
 import future.keywords.contains
 
-default account_policy(_) := false
+default subject_policy(_) := false
 default group_policy(_) := false
-default client_policy(_) := false
 default all_policy(_) := false
 
-account_policy(policy_nb) if {
-    data.policies[policy_nb].actor.type == "account"
+subject_policy(policy_nb) if {
+    data.policies[policy_nb].actor.type == "subject"
 }
 
-account_policy(policy_nb) if {
+subject_policy(policy_nb) if {
     data.policies[policy_nb].account.uuid
     data.policies[policy_nb].group == null
 }
@@ -25,10 +24,6 @@ group_policy(policy_nb) if {
 group_policy(policy_nb) if {
     data.policies[policy_nb].group.uuid
     data.policies[policy_nb].account == null
-}
-
-client_policy(policy_nb) if {
-    data.policies[policy_nb].actor.type == "client"
 }
 
 all_policy(policy_nb) if {
