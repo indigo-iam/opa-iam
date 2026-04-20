@@ -1,6 +1,6 @@
 # IAM OPA integration
 
-This repo contains a deployment of IAM where the Scope Policy API is replaced by the OPA engine.
+This repo contains the source code and a deployment Open Policy Agent (OPA) used as replacement of the INDIGO IAM Scope Policy engine.
 
 ## Run and play with OPA
 
