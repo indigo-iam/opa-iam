@@ -1,0 +1,86 @@
+name: Publish OPA Bundle
+
+on:
+  push:
+    paths:
+      - 'opa/**'
+  pull_request:
+    paths:
+      - 'opa/**'
+  
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Download OPA CLI
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+          chmod +x opa
+          sudo mv opa /usr/local/bin/opa
+
+      - name: Set bundle version
+        id: vars
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" = "tag" ]]; then
+            BUNDLE_TAG="${GITHUB_REF_NAME}"
+          elif [ "${GITHUB_EVENT_NAME}" = "push" ] || [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            BUNDLE_TAG="${GITHUB_SHA::8}"
+          else
+            BUNDLE_TAG="latest"
+          fi
+          echo "Bundle tag: $BUNDLE_TAG"
+          echo "BUNDLE_TAG=${BUNDLE_TAG}" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: |
+          opa test opa/ -v
+
+      - name: Build OPA bundle
+        run: |
+          opa build opa/rules --output dep.tar.gz
+
+      - name: Install ORAS
+        run: |
+          ORAS_VERSION=1.2.0
+          curl -fL -o oras.tar.gz \
+            https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz
+          tar -xzf oras.tar.gz
+          sudo mv oras /usr/local/bin/
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push bundle to GHCR
+        run: |
+          IMAGE=ghcr.io/indigo-iam/opa-iam
+          MT_CONF=application/vnd.oci.image.config.v1+json
+          MT_IMAGE=application/vnd.oci.image.layer.v1.tar+gzip
+          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+
+          echo "{}" > manifest.config
+
+          oras push ${IMAGE}:latest --config manifest.config:${MT_CONF} dep.tar.gz:${MT_IMAGE}
+
+          if [ "${BUNDLE_TAG}" = "latest" ]; then
+            echo "BUNDLE_TAG is latest, done."
+            exit 0
+          fi
+          oras push ${IMAGE}:${BUNDLE_TAG} --config manifest.config:${MT_CONF} dep.tar.gz:${MT_IMAGE}
+
+      - name: Bundle URL
+        run: |
+          echo "Bundle OCI URL: ${IMAGE}:${BUNDLE_TAG}"
