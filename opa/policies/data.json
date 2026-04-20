@@ -27,7 +27,7 @@
             "storage.modify:/test",
             "compute.read:/slash/"
         ],
-        "test": null
+        "test": "test"
     },
     {
         "account": null,
