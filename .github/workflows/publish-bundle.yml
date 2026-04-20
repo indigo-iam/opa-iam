@@ -47,7 +47,7 @@ jobs:
 
       - name: Build OPA bundle
         run: |
-          opa build opa/rules --output dep.tar.gz
+          opa build opa/rules --output iam.tar.gz
 
       - name: Install ORAS
         run: |
@@ -73,13 +73,13 @@ jobs:
 
           echo "{}" > manifest.config
 
-          oras push ${IMAGE}:latest --config manifest.config:${MT_CONF} dep.tar.gz:${MT_IMAGE}
+          oras push ${IMAGE}:latest --config manifest.config:${MT_CONF} iam.tar.gz:${MT_IMAGE}
 
           if [ "${BUNDLE_TAG}" = "latest" ]; then
             echo "BUNDLE_TAG is latest, done."
             exit 0
           fi
-          oras push ${IMAGE}:${BUNDLE_TAG} --config manifest.config:${MT_CONF} dep.tar.gz:${MT_IMAGE}
+          oras push ${IMAGE}:${BUNDLE_TAG} --config manifest.config:${MT_CONF} iam.tar.gz:${MT_IMAGE}
 
       - name: Bundle URL
         run: |
