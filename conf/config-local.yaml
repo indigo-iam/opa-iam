@@ -1,0 +1,11 @@
+services:
+  local:
+    url: file:///opa-bundle.tar.gz
+
+bundles:
+  iam:
+    service: local
+    resource: file:///opa-bundle.tar.gz
+    persist: false
+
+default_decision: rules

@@ -1,0 +1,7 @@
+default_decision: rules
+
+# Docs: https://www.openpolicyagent.org/docs/storage
+storage:
+  disk:
+    directory: /tmp/opa
+    auto_create: true

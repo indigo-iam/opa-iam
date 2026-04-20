@@ -2,18 +2,28 @@
 
 This repo contains the source code and a deployment Open Policy Agent (OPA) used as replacement of the INDIGO IAM Scope Policy engine.
 
-## Run and play with OPA
+## Development
 
-You can use the docker-compose [file](docker-compose.yml) to run the OPA service:
+You can use the docker-compose [file](docker-compose.yml) for development and to test the integration with OPA.
+It contains 3 services:
 
+- `opa-bundle`: exposes an OPA server which pulls the policies from the bundle published on the GitHub registry, reachable at http://opa-bundle.test.example:8182 (within the docker network)
+- `opa-local`: runs the policies locally and a live reload is also applied (useful for development). Within the docker network it is reachable at http://opa-local.test.example:8181. It is useful for development
+- `client`: client container used to test the OPA integration.
+
+For the next tests, run the services and enter in the `client` container:
+
+```bash
+docker compose up -d
+docker compose exec client bash
 ```
-$ docker-compose up -d
-```
 
-Query the OPA engine with an input file as example
+### Query OPA
 
-```
-$ curl http://localhost:8181 -s -d@assets/opa/input-example.json  | jq
+Query both OPA engines with an input file as example
+
+```bash
+$ curl http://opa-local.test.example:8181 -d@/opa-examples/input-example.json -s | jq
 {
   "denied_scopes": [
     "compute.read:/slash/pippo",
@@ -21,6 +31,19 @@ $ curl http://localhost:8181 -s -d@assets/opa/input-example.json  | jq
   ],
   "filtered_scopes": [
     "openid",
+    "storage.read:/cms/pippo",
+    "storage.read:/slash/pippo",
+    "wlcg.groups:/pippo"
+  ]
+}
+$ curl http://opa-bundle.test.example:8182 -d@/opa-examples/input-example.json -s | jq
+{
+  "denied_scopes": [],
+  "filtered_scopes": [
+    "compute.read:/slash/pippo",
+    "openid",
+    "storage.modify:/slash/",
+    "storage.read:/30559491-17b8-4bc8-84b6-7825fb7c89e5/slash/pippo",
     "storage.read:/cms/pippo",
     "storage.read:/slash/pippo",
     "wlcg.groups:/pippo"
@@ -34,9 +57,9 @@ The OPA command line offers a simple tool to profile the policy evaluation troug
 
 For instance, evaluate the output of the `denied_scopes` variable and enable the profiler with
 
-```
-$ docker-compose exec opa bash
-$ opa eval -i /opa-examples/input-example.json -d /etc/opa/rules -d /opa-examples/data-10k.json  "data.rules.scope_policies.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
+```bash
+$ docker compose exec opa-local bash
+$ opa eval -i /opa-examples/input-example.json -d /etc/opa/src/rules -d /opa-examples/data-10k.json  "data.rules.denied_scopes" --profile-sort total_time_ns --format=pretty --count=10
 [
   "compute.read:/slash/pippo",
   "storage.modify:/slash/"
@@ -70,7 +93,7 @@ $ opa eval -i /opa-examples/input-example.json -d /etc/opa/rules -d /opa-example
 ```
 
 where
-* `--profile-sort` option sorts the output by the total time the query has been computed, in nanoseconds (this option includes `--profile`)
+* `--profile-sort` option sorts the output by the total time the query has been computed, in nano seconds (this option includes `--profile`)
 * `--format=pretty` enables the output as table format (default is JSON)
 * `--count=10` repeats the policy evaluation 10 time and enables statistics results.
 
@@ -78,53 +101,111 @@ For more options and documentation to the OPA profiling click [here](https://www
 
 ### Run tests
 
-This repo contains also tests to the OPA rules.
+This repo contains also unit tests to the OPA source code.
 
 Run OPA tests with
 
-```
-$ docker-compose exec opa bash -c "opa test /etc/opa -v"
+```bash
+$ docker compose exec opa-local bash -c "opa test /etc/opa/src -v"
 /etc/opa/test/entity_matching/entity_matching.rego:
 data.test.entity_matching.test_opa_format_policy_matched: PASS (445.645µs)
 data.test.entity_matching.test_missing_input_type_do_not_match_opa_policy_format: PASS (227.547µs)
 ...
-
 ```
 
-### Install OPA locally
+## Deploy
+
+### Install CLI
 
 Download the latest OPA version to date for Linux (see [here](https://www.openpolicyagent.org/docs/latest/#1-download-opa) for other distributions) with
 
-```
-$ curl -L -o opa-cli https://github.com/open-policy-agent/opa/releases/download/v0.61.0/opa_linux_amd64
+```bash
+$ curl -L -o opa-cli https://openpolicyagent.org/downloads/latest/opa_linux_amd64
 $ chmod 755 opa-cli
 ```
 
 All the above `opa` commands will run in the same way as with docker-compose, using `opa-cli`.
 
-Build the OPA rego files (together with data) and create the bundle with
+### Build bundle
 
+An OPA bundle is a tar.gz of the OPA source code (i.e. _rego_) and the data file(s); see more in the
+[documentation](https://www.openpolicyagent.org/docs/management-bundles).
+Build the OPA bundle with
+
+```bash
+$ ./opa-cli build opa/ -o opa-bundle.tar.gz
 ```
-$ ./opa-cli build -b opa/ -o opa-bundle.tar.gz
+
+### Configuration
+
+A minimal configuration YAML file for OPA can be found in the [conf](./conf/config-local.yaml) folder,
+and basically it is
+
+```bash
+services:
+  local:
+    url: file:///opa-bundle.tar.gz
+
+bundles:
+  iam:
+    service: local
+    resource: file:///opa-bundle.tar.gz
+    persist: false
+
+default_decision: rules
 ```
+
+If you want to persist the bundle, add
+
+```bash
+bundles:
+  dep:
+    persist: true
+
+persistence_directory: /directory/for/persistence
+```
+
+in case you want to customize the polling period, add
+
+```bash
+bundles:
+  dep:
+    polling:
+      min_delay_seconds: 10 # default to 300
+      max_delay_seconds: 20 # default to 600
+```
+
+If you want to log decision information, including request body, response body (that are also shown with the logging level set to DEBUG) and methrics add
+
+```bash
+decision_logs:
+  console: true
+```
+
+For other configuration parameters see the OPA [documentation](https://www.openpolicyagent.org/docs/configuration).
+
+### Run OPA
 
 Start the server with
 
+```bash
+$ ./opa-cli run -s opa-bundle.tar.gz -c conf/config-local.yaml --log-level debug
 ```
-$ ./opa-cli run --server -b opa-bundle.tar.gz -c opa/config.yaml --log-level debug
+
+and check that we successfully obtain a response from OPA
+
+```bash
+$ curl http://localhost:8181 -d@examples/input-example.json -s | jq
+{
+  "denied_scopes": [
+    "compute.read:/slash/pippo",
+    "storage.modify:/slash/"
+  ],
+  "filtered_scopes": [
+    "openid",
+    "storage.read:/cms/pippo",
+    "storage.read:/slash/pippo",
+    "wlcg.groups:/pippo"
+  ]
+}
 ```
-
-## Testing IAM + OPA
-
-## Open issues
-
-* Decide which policy takes the precedence, based on "actor" type (account, group or client)
-  * [issue 2](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/2)
-* Need to implement a real PATH algorithm to match scopes -- right now is just a prefix match
-  * [issue 3](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/3)
-* Do we want to add and evaluate also audience with OPA? How?
-  * [issue 1](https://baltig.infn.it/fagostin/iam-opa-integration/-/issues/1)
-* Not sure if there is a more friendly way to upload policies than JSON Patch (documented in [OPA](https://www.openpolicyagent.org/docs/latest/rest-api/#patch-a-document) and [here](compose/README.md#update-a-document))
-* Do we want to keep this repo or migrate it to indigo-iam?
-* Find a way to source from a file when testing
-* If someone has in mind some test cases to add is very welcome!

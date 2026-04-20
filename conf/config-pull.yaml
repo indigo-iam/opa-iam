@@ -1,0 +1,17 @@
+services:
+  gh:
+    url: https://ghcr.io
+    type: oci
+
+bundles:
+  iam:
+    service: gh
+    resource: ghcr.io/indigo-iam/opa-iam:latest
+    persist: true
+    polling:
+      min_delay_seconds: 10
+      max_delay_seconds: 20
+
+persistence_directory: /tmp/opa
+
+default_decision: rules

@@ -1,16 +1,60 @@
-version: "3.7"
-
 services:
 
-  opa:
+  opa-bundle:
+    image: openpolicyagent/opa:latest-debug
+    ports:
+      - "8182:8182"
+
+    volumes:
+      - ./conf:/etc/opa/conf
+
+    healthcheck:
+      test: ["CMD", "wget", "http://localhost:8182/health", "-O", "/tmp/health"]
+
+    command: >
+      run --server
+      --log-level debug
+      --log-format text
+      -c /etc/opa/conf/config-pull.yaml
+      --addr http://0.0.0.0:8182
+
+    networks:
+      default:
+        aliases:
+          - opa-bundle.test.example
+
+  opa-local:
     image: openpolicyagent/opa:latest-debug
     ports:
       - "8181:8181"
     
     volumes:
-      - ./assets/opa:/opa-examples
-      - ./opa:/etc/opa
-    
-    entrypoint: opa run --server /etc/opa --log-level debug -c /etc/opa/config.yaml -w
+      - ./opa:/etc/opa/src
+      - ./conf:/etc/opa/conf
+      - ./examples:/opa-examples
 
-    init: true
+    healthcheck:
+      test: ["CMD", "wget", "http://localhost:8181/health", "-O", "/tmp/health"]
+    
+    command: > 
+      run --server /etc/opa/src
+      --log-level debug
+      -c /etc/opa/conf/config-push.yaml
+      --addr http://0.0.0.0:8181
+      --watch
+
+    networks:
+      default:
+        aliases:
+          - opa-local.test.example
+
+  client:
+    image: indigoiam/robot-framework:latest
+
+    volumes:
+      - ./examples:/opa-examples
+
+    healthcheck:
+      test: ["CMD", "curl", "https://google.com"]
+
+    entrypoint: sleep infinity
