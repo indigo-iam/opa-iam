@@ -11,6 +11,6 @@ services:
       - ./assets/opa:/opa-examples
       - ./opa:/etc/opa
     
-    entrypoint: opa run --server /etc/opa --log-level debug -c /etc/opa/config.yaml
+    entrypoint: opa run --server /etc/opa --log-level debug -c /etc/opa/config.yaml -w
 
     init: true
