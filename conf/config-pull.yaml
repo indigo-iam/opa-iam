@@ -2,15 +2,20 @@ services:
   gh:
     url: https://ghcr.io
     type: oci
+  local:
+    url: file:///etc/opa/policies.tar.gz
 
 bundles:
-  iam:
+  scope-policy-engine:
     service: gh
     resource: ghcr.io/indigo-iam/opa-iam:latest
     persist: true
     polling:
       min_delay_seconds: 10
       max_delay_seconds: 20
+  policies:
+    service: local
+    resource: file:///etc/opa/policies.tar.gz
 
 persistence_directory: /tmp/opa
 

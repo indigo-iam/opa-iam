@@ -1,3 +1,4 @@
 .vscode
 opa-cli
 opa-bundle.tar.gz
+policy-bundle.tar.gz

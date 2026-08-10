@@ -7,14 +7,14 @@ services:
 
     volumes:
       - ./conf:/etc/opa/conf
+      - ./policy-bundle.tar.gz:/etc/opa/policies.tar.gz
 
     healthcheck:
       test: ["CMD", "wget", "http://localhost:8182/health", "-O", "/tmp/health"]
 
     command: >
       run --server
-      --log-level debug
-      --log-format text
+      --log-level debug --log-format text
       -c /etc/opa/conf/config-pull.yaml
       --addr http://0.0.0.0:8182
 
