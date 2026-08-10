@@ -115,6 +115,8 @@ data.test.entity_matching.test_missing_input_type_do_not_match_opa_policy_format
 
 ## Deploy
 
+Here is an example on how to deploy OPA locally. It includes polling the OPA bundle containing the rego files from the GitHub registry and sourcing the local `data.json` file (as in the `opa-bundle` container).
+
 ### Install CLI
 
 Download the latest OPA version to date for Linux (see [here](https://www.openpolicyagent.org/docs/latest/#1-download-opa) for other distributions) with
@@ -128,29 +130,38 @@ All the above `opa` commands will run in the same way as with docker-compose, us
 
 ### Build bundle
 
-An OPA bundle is a tar.gz of the OPA source code (i.e. _rego_) and the data file(s); see more in the
-[documentation](https://www.openpolicyagent.org/docs/management-bundles).
-Build the OPA bundle with
+Here we use two different bundles for OPA:
+- a general bundle published on the [GitHub registry](https://github.com/indigo-iam/opa-iam/pkgs/container/opa-iam) containing the scope policy logic (i.e. _rego_ files grouped in a tar.gz)
+- a bundle which defines the policies to be applied, in a JSON format. An example is shown in the [data.json](./opa/policies/data.json) file. This bundle is specific per VO (i.e. INDIGO IAM instance), so it must be defined and built before to start OPA.
+
+Please check more information about the OPA bundle in the [documentation](https://www.openpolicyagent.org/docs/management-bundles).
+
+Build the policy bundle with
 
 ```bash
-$ ./opa-cli build opa/ -o opa-bundle.tar.gz
+$ ./opa-cli build -b opa/policies -o policy-bundle.tar.gz
 ```
 
 ### Configuration
 
-A minimal configuration YAML file for OPA can be found in the [conf](./conf/config-local.yaml) folder,
+A minimal configuration YAML file for OPA can be found in the [conf](./conf/config-pull.yaml) folder,
 and basically it is
 
 ```bash
 services:
+  gh:
+    url: https://ghcr.io
+    type: oci
   local:
-    url: file:///opa-bundle.tar.gz
+    url: file:///</full/path/to/your/policy-bundle.tar.gz>
 
 bundles:
-  iam:
+  scope-policy-engine:
+    service: gh
+    resource: ghcr.io/indigo-iam/opa-iam:multi-bundle
+  policies:
     service: local
-    resource: file:///opa-bundle.tar.gz
-    persist: false
+    resource: file:///<full/path/to/your/policy-bundle.tar.gz>
 
 default_decision: rules
 ```
@@ -159,17 +170,17 @@ If you want to persist the bundle, add
 
 ```bash
 bundles:
-  dep:
+  <scope-policy-engine|policies>:
     persist: true
 
-persistence_directory: /directory/for/persistence
+persistence_directory: </directory/for/persistence>
 ```
 
 in case you want to customize the polling period, add
 
 ```bash
 bundles:
-  dep:
+  <scope-policy-engine|policies>:
     polling:
       min_delay_seconds: 10 # default to 300
       max_delay_seconds: 20 # default to 600
@@ -189,7 +200,7 @@ For other configuration parameters see the OPA [documentation](https://www.openp
 Start the server with
 
 ```bash
-$ ./opa-cli run -s opa-bundle.tar.gz -c conf/config-local.yaml --log-level debug
+$ ./opa-cli run --server --log-level debug --log-format text -c conf/config-pull.yaml
 ```
 
 and check that we successfully obtain a response from OPA

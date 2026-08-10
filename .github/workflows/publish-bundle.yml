@@ -48,7 +48,7 @@ jobs:
 
       - name: Build OPA bundle
         run: |
-          opa build opa/rules --output iam.tar.gz
+          opa build -b opa/rules --output iam.tar.gz
 
       - name: Install ORAS
         run: |
