@@ -6,7 +6,6 @@ import future.keywords.contains
 
 default account_policy(_) := false
 default group_policy(_) := false
-default client_policy(_) := false
 default all_policy(_) := false
 
 account_policy(policy_nb) if {
@@ -18,6 +17,12 @@ account_policy(policy_nb) if {
     data.policies[policy_nb].group == null
 }
 
+# We want to consider a Client in the same way as an account,
+# both for policy definition and policy evaluation order
+account_policy(policy_nb) if {
+    data.policies[policy_nb].actor.type == "client"
+}
+
 group_policy(policy_nb) if {
     data.policies[policy_nb].actor.type == "group"
 }
@@ -25,10 +30,6 @@ group_policy(policy_nb) if {
 group_policy(policy_nb) if {
     data.policies[policy_nb].group.uuid
     data.policies[policy_nb].account == null
-}
-
-client_policy(policy_nb) if {
-    data.policies[policy_nb].actor.type == "client"
 }
 
 all_policy(policy_nb) if {
