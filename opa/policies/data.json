@@ -6,7 +6,7 @@
                 "name": "/indigoiam",
                 "type": "group"
             },
-            "description": "Grant storage scopes to indigoiam group",
+            "description": "Deny storage scopes to indigoiam group",
             "matchingPolicy": "EQ",
             "rule": "DENY",
             "scopes": [
@@ -17,18 +17,17 @@
         },
         {
             "actor": {
-                "id": "1234",
+                "id": "777",
                 "name": "Test Client",
-                "type": "group"
+                "type": "client"
             },
-            "description": "Grant compute scopes to Test Client",
-            "matchingPolicy": "PATH",
+            "description": "Deny scopes to Test Client",
+            "matchingPolicy": "EQ",
             "rule": "DENY",
             "scopes": [
-                "storage.modify:/test",
-                "compute.read:/slash/"
-            ],
-            "test": "null"
+                "test2",
+                "test1"
+            ]
         },
         {
             "account": null,

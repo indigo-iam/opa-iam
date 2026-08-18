@@ -71,7 +71,7 @@ test_opa_format_client_entity_matched if {
             }
         }]
 
-    policy_is_client := rules.client_policy(0)  
+    policy_is_client := rules.account_policy(0)  
         with data.policies as mock_data
     
     policy_is_client
@@ -86,7 +86,7 @@ test_missing_client_type_not_match_opa_entity_format if {
                 }
         }]
 
-    policy_is_client := rules.client_policy(0) 
+    policy_is_client := rules.account_policy(0) 
         with data.policies as mock_data
     
     not policy_is_client
