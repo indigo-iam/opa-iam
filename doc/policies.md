@@ -4,7 +4,7 @@ The scope policies are a list of policies which define if an account, a client, 
 
 As for the INDIGO IAM scope policies, a policy applied to an account overrides a policy applied to a group, which overrides a policy applied to everybody. Moreover, in OPA we allow to add policies for clients, which are considered in the same way as an account.
 
-The policy schema supported by OPA is explained below. Anyway, for backward compatibility also the INDIGO IAM policy schema is supported, meaning that you can simply download the scope policies form IAM and the OPA policy engine will work in the same way as Java engine.
+The policy schema supported by OPA is explained below. Anyway, for backward compatibility also the INDIGO IAM policy schema is supported, meaning that you can simply download the scope policies form IAM and the OPA policy engine will work in the same way as the Java engine.
 
 ## Data schema
 

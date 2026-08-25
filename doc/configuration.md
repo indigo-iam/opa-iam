@@ -2,7 +2,7 @@
 
 ## Bundle
 
-The following configuration allows to run OPA polling from bundles. To investigate more about OPA bundles, please check the [documentation](https://www.openpolicyagent.org/docs/management-bundles).
+The following configuration allows to run OPA polling from bundles. If you want to investigate more about OPA bundles, please check the [documentation](https://www.openpolicyagent.org/docs/management-bundles).
 
 Here we use two different bundles for OPA:
 - a general bundle published on the [GitHub registry](https://github.com/indigo-iam/opa-iam/pkgs/container/opa-iam) containing the scope policy logic (i.e. _rego_ files)
@@ -13,7 +13,7 @@ Here we use two different bundles for OPA:
 A minimal configuration YAML file for OPA can be found in the [conf](../conf/config-pull.yaml) folder,
 and basically it is
 
-```bash
+```yaml
 services:
   gh:
     url: https://ghcr.io
@@ -34,7 +34,7 @@ default_decision: rules
 
 If you want to persist the bundle, add
 
-```bash
+```yaml
 bundles:
   <scope-policy-engine|policies>:
     persist: true
@@ -44,7 +44,7 @@ persistence_directory: </directory/for/persistence>
 
 in case you want to customize the polling period, add
 
-```bash
+```yaml
 bundles:
   <scope-policy-engine|policies>:
     polling:
@@ -54,7 +54,7 @@ bundles:
 
 If you want to log decision information, including request body, response body (that are also shown with the logging level set to DEBUG) and methrics add
 
-```bash
+```yaml
 decision_logs:
   console: true
 ```
