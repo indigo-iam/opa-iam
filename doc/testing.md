@@ -80,6 +80,29 @@ $ curl http://opa-bundle.test.example:8182 -d@/opa-examples/input-example.json -
 }
 ```
 
+An example of OPA input containing user, group and client information is
+
+```json
+{
+        "user": {
+            "id": "73f16d93-2441-4a50-88ff-85360d78c6b5",
+            "groups": [
+                "31d9230c-90ae-4457-a990-0c443ab4aacc",
+                "c617d586-54e6-411d-8e38-649677980004"
+            ]
+        },
+        "client": {
+             "id": "71e2fe91-1f85-4333-9098-406a1a36292a"
+        },
+        "scopes": [
+            "openid",
+            "storage.read:/pippo/pluto/paperino"
+        ]
+}
+```
+
+For further examples, please check the [examples](../examples/) directory.
+
 ### Profiling
 
 The OPA command line offers a simple tool to profile the policy evaluation trough the `opa eval` command.

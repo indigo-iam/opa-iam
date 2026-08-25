@@ -9,3 +9,4 @@ The `doc` folder contains further documentation for this project, in particular:
 
 - [Develop and test OPA policies](./doc/testing.md)
 - [OPA configuration](./doc/configuration.md)
+- [Policy definition](./doc/policies.md).
